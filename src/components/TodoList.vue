@@ -34,6 +34,7 @@
       <button 
         v-else 
         class="btn" 
+        role="add-btn"
         @click="addTodo"
       >
         Add
@@ -53,6 +54,7 @@
           focus:ring-1 focus:ring-offset-2 focus:ring-gray-500
         "
         type="checkbox" 
+        role="checkbox"
       >
       <label 
         class="todo__label ml-2 text-left flex-grow	font-semibold"
@@ -60,6 +62,7 @@
           todo.status ? finishClass : '',
         ]"
         :for="todo.ID"
+        role="label"
       >
         {{ todo.content }}
       </label>
@@ -71,6 +74,7 @@
       </button>
       <button 
         class="btn"
+        role="delete-btn"
         @click="deleteTodo(todo.ID)"
       >
         Delete
