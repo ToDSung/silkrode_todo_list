@@ -1,43 +1,81 @@
 <template>
-  <h1 class="title"> THINGS TODO </h1>
-
-  <div class="todo">
-    <input 
-      v-model="newTodoContent" 
-      class="todo__text-field"
-      placeholder="Add Todo"
-    >
-    <button v-if="isEditStatus" @click="modifyTodo">
-      Edit
-    </button>
-    <button v-else @click="addTodo">
-      Add
-    </button>
-  </div>
+  <h1 class="title text-3xl text-center	my-5"> 
+    THINGS TODO 
+  </h1>
 
   <div
-    v-for="(todo, index) in todoList" 
-    :key="index" 
-    class="todo"
+    class="todo grid grid-cols-1 gap-4 px-1 max-w-lg mx-auto"
   >
-    <input 
-      class="todo__checkbox"
-      type="checkbox" 
-      :id="index" 
-      v-model="todo.status"
+    <div class="todo__item flex items-center">
+      <input 
+        v-model="newTodoContent" 
+        type="text" 
+        class="
+          todo__text-field w-full rounded-md bg-gray-100 border-transparent 
+          focus:border-gray-500 focus:bg-white focus:ring-0
+          mr-2
+        "
+        placeholder="Add Todo"
+      >
+      <template v-if="isEditStatus">
+        <button 
+          class="btn" 
+          @click="modifyTodo"
+        >
+          Edit
+        </button>
+        <button 
+          class="btn" 
+          @click="cancelModifyTodo"
+        >
+          Cancel
+        </button>
+      </template>
+      <button 
+        v-else 
+        class="btn" 
+        @click="addTodo"
+      >
+        Add
+      </button>
+    </div>
+
+    <div
+      v-for="(todo, index) in todoList" 
+      :key="index" 
+      class="todo__item flex items-center"
     >
-    <label 
-      class="todo__label"
-      :for="index"
-    >
-      {{ todo.content }}
-    </label>
-    <button @click="toggleModifyTodo(index)">
-      Edit
-    </button>
-    <button @click="deleteTodo(index)">
-      Delete
-    </button>
+      <input 
+        :id="index" 
+        v-model="todo.status"
+        class="todo__checkbox h-6 w-6 rounded bg-gray-200 border-transparent 
+          focus:border-transparent focus:bg-green-200 text-green-700 
+          focus:ring-1 focus:ring-offset-2 focus:ring-gray-500
+        "
+        type="checkbox" 
+      >
+      <label 
+        class="todo__label ml-2 text-left flex-grow	font-semibold"
+        :class="[
+          todo.status ? finishClass : '',
+        ]"
+        :for="index"
+      >
+        {{ todo.content }}
+      </label>
+      <button 
+        class="btn"
+        @click="toggleModifyTodo(index)"
+      >
+        Edit
+      </button>
+      <button 
+        class="btn"
+        @click="deleteTodo(index)"
+      >
+        Delete
+      </button>
+    </div>
   </div>
 </template>
 
@@ -49,17 +87,19 @@ export default {
     const todoList = ref([
       {
         status: false,
-        content: 1
+        content: 'Work'
       },
       {
         status: true,
-        content: 2
+        content: 'Exercise'
       },
     ])
     
     const newTodoContent = ref('')
     const indexPrepareToModify = ref(-1)
     const isEditStatus = computed(() => indexPrepareToModify.value >= 0)
+
+    const finishClass = 'line-through text-gray-400'
     
     const addTodo = () => {
       if (!newTodoContent.value) return alert('Need todo content')
@@ -71,6 +111,7 @@ export default {
           content: newTodoContent.value
         }
       ]
+      newTodoContent.value = ''
     }
     
     const toggleModifyTodo = (indexToModify) => {
@@ -91,10 +132,15 @@ export default {
     
           return todo
         })
+        todoList.value = newTodoList
         newTodoContent.value = ''
         indexPrepareToModify.value = -1
-        return todoList.value = newTodoList
       }
+    }
+
+    const cancelModifyTodo = () => {
+      indexPrepareToModify.value = -1
+      newTodoContent.value = ''
     }
     
     const deleteTodo = (indexToDelete) => {
@@ -105,9 +151,11 @@ export default {
       newTodoContent,
       isEditStatus,
       todoList,
+      finishClass,
       addTodo,
       toggleModifyTodo,
       modifyTodo,
+      cancelModifyTodo,
       deleteTodo,
     }
   }
@@ -115,27 +163,10 @@ export default {
 
 </script>
 
-<style scoped>
-.todo {
-  display: flex;
-  align-items: center;
-  margin: 0 auto;
-  max-width: 24rem;
-}
+<style lang="scss" scoped>
 
-.todo__label {
-  text-align: left;
-  flex-grow: 1;
-}
-
-.todo__text-field {
-  flex-grow: 1;
-}
-
-button {
-  border-radius: 1rem;
-  margin: .25rem;
-  padding: .25rem .5rem;
-  min-width: 4rem;
+.btn {
+  min-width: 5rem;
+  @apply bg-green-500 hover:bg-green-700 text-white font-bold mx-2 py-2 px-4 rounded-xl;
 }
 </style>
