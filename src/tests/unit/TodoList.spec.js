@@ -21,16 +21,16 @@ describe('TodoList.vue', () => {
 
   it('renders checkbox clickable', async () => {
     const { getAllByRole } = render(TodoList)
-    const checkboxNode = getAllByRole('checkbox')
-    expect(checkboxNode).toBeTruthy()
-    expect(checkboxNode[0]).not.toBeChecked()
-    expect(checkboxNode[1]).toBeChecked()
+    const checkboxNodes = getAllByRole('checkbox')
+    expect(checkboxNodes).toBeTruthy()
+    expect(checkboxNodes[0]).not.toBeChecked()
+    expect(checkboxNodes[1]).toBeChecked()
 
-    await fireEvent.click(checkboxNode[0])
-    await fireEvent.click(checkboxNode[1])
+    await fireEvent.click(checkboxNodes[0])
+    await fireEvent.click(checkboxNodes[1])
 
-    expect(checkboxNode[0]).toBeChecked()
-    expect(checkboxNode[1]).not.toBeChecked()
+    expect(checkboxNodes[0]).toBeChecked()
+    expect(checkboxNodes[1]).not.toBeChecked()
   })
 
   it('add todo will alert while have no todo content', async () => {
@@ -44,32 +44,66 @@ describe('TodoList.vue', () => {
   it('add todo successfully', async () => {
     const { getByText, getByPlaceholderText, getAllByRole } = render(TodoList)
     const textNode = getByPlaceholderText('Add Todo')
-    const btnNode = getByText('Add')
+    const addBtnNode = getByText('Add')
     
     expect(textNode).toBeTruthy()
-    expect(btnNode).toBeTruthy()
+    expect(addBtnNode).toBeTruthy()
 
-    await fireEvent.update(textNode, 'Todo Jest')
-    expect(textNode.value).toBe('Todo Jest')
+    await fireEvent.update(textNode, 'Todo test')
+    expect(textNode.value).toBe('Todo test')
     
-    await fireEvent.click(btnNode)
+    await fireEvent.click(addBtnNode)
     expect(textNode.value).toBe('')
 
-    const checkboxNode = getAllByRole('checkbox')
-    expect(checkboxNode).toBeTruthy()
-    expect(checkboxNode[2]).not.toBeChecked()
+    const checkboxNodes = getAllByRole('checkbox')
+    expect(checkboxNodes).toBeTruthy()
+    expect(checkboxNodes[2]).not.toBeChecked()
   })
 
   it('delete todo successfully', async () => {
     const { getAllByRole } = render(TodoList)
-    const btnNode = getAllByRole('delete-btn')
-    await fireEvent.click(btnNode[0])
+    const deleteBtnNodes = getAllByRole('delete-btn')
+    await fireEvent.click(deleteBtnNodes[0])
 
-    const checkboxNode = getAllByRole('checkbox')
-    expect(checkboxNode[1]).not.toBeTruthy()
-    expect(checkboxNode[0]).toBeChecked()
+    const checkboxNodes = getAllByRole('checkbox')
+    expect(checkboxNodes[1]).toBeFalsy()
+    expect(checkboxNodes[0]).toBeChecked()
 
     const labelNode = getAllByRole('label')
     expect(labelNode[0]).toHaveTextContent('Exercise')
+  })
+
+  it('edit todo successfully', async () => {
+    const { getByRole, getAllByRole, queryByRole } = render(TodoList)
+    const editBtnNodes = getAllByRole('toggle-edit-btn')
+    await fireEvent.click(editBtnNodes[0])
+
+    const textNode = getByRole('text-field')
+    expect(textNode.value).toBe('Work')
+
+    let modifyBtnNode = getByRole('modify-btn')
+    let cancelBtnNode = getByRole('cancel-btn')
+    let addBtnNode = queryByRole('add-btn')
+
+    expect(modifyBtnNode).toBeTruthy()
+    expect(cancelBtnNode).toBeTruthy()
+    expect(addBtnNode).toBeFalsy()
+
+    await fireEvent.update(textNode, 'Todo test')
+    expect(textNode.value).toBe('Todo test')
+    
+    await fireEvent.click(modifyBtnNode)
+    expect(textNode.value).toBe('')
+
+    modifyBtnNode = queryByRole('modify-btn')
+    cancelBtnNode = queryByRole('cancel-btn')
+    addBtnNode = getByRole('add-btn')
+
+    expect(modifyBtnNode).toBeFalsy()
+    expect(cancelBtnNode).toBeFalsy()
+    expect(addBtnNode).toBeTruthy()
+
+    const labelNode = getAllByRole('label')
+    expect(labelNode[0]).toHaveTextContent('Todo test')
   })
 });

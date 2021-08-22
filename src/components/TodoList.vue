@@ -15,17 +15,20 @@
           focus:border-gray-500 focus:bg-white focus:ring-0
           mr-2
         "
+        role="text-field"
         placeholder="Add Todo"
       >
       <template v-if="isEditStatus">
         <button 
           class="btn" 
+          role="modify-btn"
           @click="modifyTodo"
         >
-          Edit
+          Modify
         </button>
         <button 
-          class="btn" 
+          class="btn"
+          role="cancel-btn"
           @click="cancelModifyTodo"
         >
           Cancel
@@ -68,6 +71,7 @@
       </label>
       <button 
         class="btn"
+        role="toggle-edit-btn"
         @click="toggleModifyTodo(todo.ID)"
       >
         Edit
