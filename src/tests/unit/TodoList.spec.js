@@ -33,6 +33,21 @@ describe('TodoList.vue', () => {
     expect(checkboxNodes[1]).not.toBeChecked()
   })
 
+  it('render todo finish status', async () => {
+    const { getByRole, getAllByRole } = render(TodoList)
+    const subTitleNode = getByRole('todo-status')
+    expect(subTitleNode).toBeTruthy()
+    expect(subTitleNode.textContent).toContain('You still have 1 todo.')
+
+    const checkboxNodes = getAllByRole('checkbox')
+    await fireEvent.click(checkboxNodes[1])
+    expect(subTitleNode.textContent).toContain('You still have 2 todo.')
+
+    await fireEvent.click(checkboxNodes[0])
+    await fireEvent.click(checkboxNodes[1])
+    expect(subTitleNode.textContent).toContain('You have already done all todo things！')
+  })
+
   it('add todo will alert while have no todo content', async () => {
     jest.spyOn(window, 'alert').mockImplementation(() => {});
     const { getByRole } = render(TodoList)

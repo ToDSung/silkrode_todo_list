@@ -3,6 +3,12 @@
     THINGS TODO 
   </h1>
 
+  <h2 class="title text-2xl text-center	my-5"
+    role="todo-status "
+  >
+    {{ todoFinishStatusText }}
+  </h2>
+
   <div
     class="todo grid grid-cols-1 gap-4 px-1 max-w-lg mx-auto"
   >
@@ -104,6 +110,12 @@ export default {
         content: 'Exercise'
       },
     ])
+
+    const todoFinishStatusText = computed(() => {
+      const todoCountUnfinished = todoList.value.filter(({ status }) => !status).length
+      if (todoCountUnfinished) return `You still have ${todoCountUnfinished} todo.`
+      return 'You have already done all todo things！'
+    })
     
     const newTodoContent = ref('')
     const idPrepareToModify = ref('')
@@ -168,9 +180,10 @@ export default {
     }
 
     return {
+      todoList,
+      todoFinishStatusText,
       newTodoContent,
       isEditStatus,
-      todoList,
       finishClass,
       addTodo,
       toggleModifyTodo,
